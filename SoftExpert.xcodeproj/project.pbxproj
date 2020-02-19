@@ -15,6 +15,8 @@
 		7F056ABD23FB4E640038C71B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7F056ABC23FB4E640038C71B /* Assets.xcassets */; };
 		7F056AC023FB4E640038C71B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7F056ABE23FB4E640038C71B /* LaunchScreen.storyboard */; };
 		7F056ACB23FB4E640038C71B /* SoftExpertTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F056ACA23FB4E640038C71B /* SoftExpertTests.swift */; };
+		7FF8380623FCB02E00757717 /* RecipeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF8380523FCB02E00757717 /* RecipeModel.swift */; };
+		7FF8380823FCB35B00757717 /* RecipeSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF8380723FCB35B00757717 /* RecipeSearchViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +42,8 @@
 		7F056AC623FB4E640038C71B /* SoftExpertTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SoftExpertTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F056ACA23FB4E640038C71B /* SoftExpertTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftExpertTests.swift; sourceTree = "<group>"; };
 		7F056ACC23FB4E640038C71B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7FF8380523FCB02E00757717 /* RecipeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeModel.swift; sourceTree = "<group>"; };
+		7FF8380723FCB35B00757717 /* RecipeSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSearchViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +67,9 @@
 		7F056AA423FB4E610038C71B = {
 			isa = PBXGroup;
 			children = (
+				7FF8380223FCA1B200757717 /* Controller */,
+				7FF8380123FCA1A900757717 /* View */,
+				7FF8380023FCA1A200757717 /* Model */,
 				7F056AAF23FB4E610038C71B /* SoftExpert */,
 				7F056AC923FB4E640038C71B /* SoftExpertTests */,
 				7F056AAE23FB4E610038C71B /* Products */,
@@ -100,6 +107,29 @@
 				7F056ACC23FB4E640038C71B /* Info.plist */,
 			);
 			path = SoftExpertTests;
+			sourceTree = "<group>";
+		};
+		7FF8380023FCA1A200757717 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				7FF8380523FCB02E00757717 /* RecipeModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		7FF8380123FCA1A900757717 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		7FF8380223FCA1B200757717 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				7FF8380723FCB35B00757717 /* RecipeSearchViewController.swift */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -204,8 +234,10 @@
 			files = (
 				7F056AB523FB4E610038C71B /* ViewController.swift in Sources */,
 				7F056AB123FB4E610038C71B /* AppDelegate.swift in Sources */,
+				7FF8380823FCB35B00757717 /* RecipeSearchViewController.swift in Sources */,
 				7F056AB323FB4E610038C71B /* SceneDelegate.swift in Sources */,
 				7F056ABB23FB4E610038C71B /* SoftExpert.xcdatamodeld in Sources */,
+				7FF8380623FCB02E00757717 /* RecipeModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,7 +329,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -351,7 +383,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -375,7 +407,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = mahmoudhlmy.SoftExpert;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -393,7 +425,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = mahmoudhlmy.SoftExpert;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
