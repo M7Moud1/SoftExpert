@@ -26,8 +26,8 @@ class RecipeTableViewCell: UITableViewCell {
             
             clipsToBounds = true
             layer.masksToBounds = false
-            layer.shadowOffset = CGSize(width: 2, height: 1)
-            layer.shadowRadius = 5
+            layer.shadowOffset = CGSize(width: 0, height: 1)
+                layer.shadowRadius = 5
                 layer.shadowOpacity = 0.2
 
             layer.shadowColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
@@ -43,7 +43,6 @@ class RecipeTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        
     }
     
     func configure(item:Hit) {

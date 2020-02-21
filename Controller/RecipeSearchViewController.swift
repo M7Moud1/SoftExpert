@@ -140,7 +140,7 @@ extension RecipeSearchViewController : UITableViewDelegate, UITableViewDataSourc
         let vc = storyboard?.instantiateViewController(withIdentifier: "GoToDetails") as! ReciepeDetails
         
         vc.hits = recipe?.hits[indexPath.row]
-        self.navigationController?.pushViewController(vc, animated: true)
+         self.navigationController?.pushViewController(vc, animated: true)
         
     }
 }
