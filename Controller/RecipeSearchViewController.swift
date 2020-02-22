@@ -216,7 +216,7 @@ class RecipeSearchViewController: UIViewController,UISearchResultsUpdating,UISea
     
     func deleteWord(index : Int){
         
-        
+        if  index < words.count {
         let note = words[index]
 
 
@@ -246,7 +246,15 @@ class RecipeSearchViewController: UIViewController,UISearchResultsUpdating,UISea
 
 
 
-    }
+        } else {
+            AlertBuilder(title: "Error", message: "Index out of range", preferredStyle: .alert)
+            .addAction(title: "ok", style: .default)
+            .build()
+            .show(animated: true, completionHandler: nil)
+            
+        }
+        
+}
     
 }
 
@@ -287,7 +295,18 @@ extension RecipeSearchViewController : UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        
+        cell.transform = CGAffineTransform(translationX: tableView.bounds.width, y: 0)
 
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0.01 * Double(indexPath.row),
+            options: [.curveEaseInOut],
+            animations: {
+                cell.transform = CGAffineTransform(translationX: 0, y: 0)
+        })
+        
         if tableView.tag == 1 {
         if indexPath.row == ((recipe?.hits.count)! - 1) {
             if recipe!.more {
