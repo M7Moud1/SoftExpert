@@ -42,15 +42,7 @@ class RecipeRequest {
 
     func getRecipe(searchText:String, from:Int,to:Int, completionHandler: @escaping (RecipeModel?, ErrorModel?) -> ()) {
         
-        let parameter : [String:Any] = [
-        
-            "q" : searchText,
-            "from" : from,
-            "to" : to,
-            "app_id":app_id,
-            "app_key":app_key
-            
-        ]
+    
         
         let header = [
                     "Content-Type":"application/x-www-form-urlencoded"

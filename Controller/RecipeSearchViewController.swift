@@ -6,15 +6,22 @@
 //
 
 import UIKit
+import CoreData
+
+let appdelegate = UIApplication.shared.delegate as? AppDelegate
 
 class RecipeSearchViewController: UIViewController,UISearchResultsUpdating,UISearchBarDelegate {
 
     @IBOutlet weak var RecipeTable: UITableView!
+    @IBOutlet weak var SuggestTable: UITableView!
+    
     var startIndex = 0
     var endIndex = 10
     let search = UISearchController(searchResultsController: nil)
     var recipe : RecipeModel?
+    var words = [Latestsearchwords]()
 
+    @IBOutlet weak var NoResult: UILabel!
     
     func updateSearchResults(for searchController: UISearchController) {
            
@@ -26,10 +33,24 @@ class RecipeSearchViewController: UIViewController,UISearchResultsUpdating,UISea
         super.viewDidLoad()
 
         setupNavBar()
+        
+        RecipeTable.tableFooterView = UIView()
+        SuggestTable.tableFooterView = UIView()
+               
+        
        RecipeTable.delegate = self
         RecipeTable.dataSource = self
-        sendRequest(from: 0, to: 10, searchText: "t")
+        
+        SuggestTable.delegate = self
+        SuggestTable.dataSource = self
+        
+        
+        RecipeTable.isHidden = true
+        SuggestTable.isHidden = true
+        
        
+        NoResult.isHidden = false
+        NoResult.text = "Welcome to recipe food App "
 
     }
     
@@ -38,7 +59,8 @@ class RecipeSearchViewController: UIViewController,UISearchResultsUpdating,UISea
         self.RecipeTable.estimatedRowHeight = UITableView.automaticDimension
         self.RecipeTable.rowHeight = 150
     }
-      func setupNavBar() {
+    
+    func setupNavBar() {
           
           if #available(iOS 11.0, *) {
               navigationController?.navigationBar.prefersLargeTitles = true
@@ -64,18 +86,44 @@ class RecipeSearchViewController: UIViewController,UISearchResultsUpdating,UISea
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         
-        print(searchBar.searchTextField.text)
+        save(word: searchBar.searchTextField.text!)
+        for i in 0..<words.count {
+            
+            print((i) ," و ",  words.count)
+            
+            if ((words[i].word?.caseInsensitiveCompare(searchBar.searchTextField.text!)) == .orderedSame) {
+                
+                deleteWord(index: i)
+                break
+            }
+        }
         sendRequest(from: 0, to: 10, searchText: searchBar.searchTextField.text ?? "")
         
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        
+        print(words.count)
+        self.NoResult.isHidden = true
+        SuggestTable.isHidden = false
+        RecipeTable.isHidden = true
+        
+        if fetchLatestWord() != 0 {
+
+        SuggestTable.reloadData()
+            
+        }
     }
 
     func sendRequest(from:Int, to :Int, searchText:String) {
         
         UIViewHelper.shared.showActivityIndicator(uiView: self.view)
-        RecipeRequest.instance.getRecipe(searchText: "chicken", from: startIndex, to: endIndex) { (data, error) in
+        RecipeRequest.instance.getRecipe(searchText: searchText, from: startIndex, to: endIndex) { (data, error) in
             
             self.search.isActive = false
-            
+            self.SuggestTable.isHidden = true
+            self.RecipeTable.isHidden = false
+
             UIViewHelper.shared.hideActivityIndicator(uiView: self.view)
 
             if data != nil {
@@ -83,64 +131,214 @@ class RecipeSearchViewController: UIViewController,UISearchResultsUpdating,UISea
                 self.recipe = data
                 self.RecipeTable.reloadData()
                 
-                if data?.count == 0 {
+                if data?.hits.count == 0 {
+                    
+                    self.NoResult.text = "No result for this search"
+                    self.NoResult.isHidden = false
                     
                     
                 } else {
                     
+                    self.NoResult.isHidden = true
+
                 }
                 
-            } else {
+            } else if error != nil{
                 
+                AlertBuilder(title: "Error", message: error?._message, preferredStyle: .alert)
+                    .addAction(title: "ok", style: .default)
+                    .build()
+                    .show(animated: true, completionHandler: nil)
             }
         }
     }
+    
+    func save(word:String){
+        
+        if fetchLatestWord() == 10 {
+            
+            deleteWord(index: 0)
+        }
+        
+        if #available(iOS 10.0, *) {
+            guard let entity  = appdelegate?.persistentContainer.viewContext else {return}
+            let latestWord = Latestsearchwords(context: entity)
+            latestWord.word = word
+            print(latestWord)
+            do {
+                try entity.save()
+            } catch  {
+                print(error)
+            }
+        } else {
+             let context = NSEntityDescription.insertNewObject(forEntityName: "Latestsearschwords", into: appdelegate!.managedObjectContext)
+            
+            context.setValue(word, forKey: "word")
+            
+            do {
+                try context.managedObjectContext!.save()
+            } catch  {
+                 print(error)
+             }
+        }
+     
+    }
+    
+    func fetchLatestWord() -> Int{
+        
+         let fetchrequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Latestsearchwords")
+        
+        if #available(iOS 10.0, *) {
+            guard let entity  = appdelegate?.persistentContainer.viewContext else { return Int()}
+
+            
+            do {
+                words =  try entity.fetch(fetchrequest) as! [Latestsearchwords]
+                print(words.count)
+                print(words)
+            } catch  {
+                print(error)
+            }
+        } else {
+            
+            let context = appdelegate?.managedObjectContext
+           
+            
+            do {
+                words = try context!.fetch(fetchrequest) as! [Latestsearchwords]
+            } catch  {
+                print(error)
+            }
+            
+        }
+        return words.count
+    }
+    
+    func deleteWord(index : Int){
+        
+        
+        let note = words[index]
+
+
+        if #available(iOS 10.0, *) {
+            let managedContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+            
+
+            managedContext.delete(note)
+            words.remove(at: index)
+
+            do {
+                try managedContext.save()
+            } catch let error as NSError {
+                print("Error While Deleting Note: \(error.userInfo)")
+            }
+        } else {
+            let context = appdelegate?.managedObjectContext
+            context?.delete(words[index] as NSManagedObject)
+            words.remove(at: index)
+            do {
+                try context?.save()
+            } catch  {
+                print(error)
+            }
+
+        }
+
+
+
+    }
+    
 }
 
 extension RecipeSearchViewController : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        print(self.recipe?.hits.count)
+        if tableView.tag == 1 {
         return self.recipe?.hits.count ?? 0
+        } else if tableView.tag == 2 {
+            
+            return words.count
+        }
+        
+        return Int()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        if tableView.tag == 1 {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "recipe") as! RecipeTableViewCell
         
         cell.configure(item: (recipe?.hits[indexPath.row])!)
+            
+            return cell
+
+        } else if tableView.tag == 2 {
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Suggest", for: indexPath) as! SuggestCellTableViewCell
+            
+            cell.word.text = words[words.count - indexPath.row - 1].word
+            
+            return cell
+        }
         
-     
+     return UITableViewCell()
         
-        return cell
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
 
+        if tableView.tag == 1 {
         if indexPath.row == ((recipe?.hits.count)! - 1) {
             if recipe!.more {
             let startindex = recipe?.hits.count
                 endIndex = startindex! + 10
                 if endIndex <= 100 {
-                  sendRequest(from: startIndex, to: endIndex, searchText: "chicken")
+                    sendRequest(from: startIndex, to: endIndex, searchText: recipe?.q ?? "")
                 }
               }
     }
+        }
 }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
+        if tableView.tag == 1 {
+        
         return UITableView.automaticDimension
+            
+        } else if tableView.tag == 2 {
+            
+            return 50
+        }
+        
+        return CGFloat()
 
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        if tableView.tag == 1 {
         let vc = storyboard?.instantiateViewController(withIdentifier: "GoToDetails") as! ReciepeDetails
         
         vc.hits = recipe?.hits[indexPath.row]
          self.navigationController?.pushViewController(vc, animated: true)
+            
+        } else if tableView.tag == 2 {
+            
+            let str = words[words.count - indexPath.row - 1].word!
+            
+             deleteWord(index: words.count - indexPath.row - 1)
+
+            
+            save(word: str )
+
+
+            
+            sendRequest(from: 0, to: 10, searchText: str)
+            
+
+        }
         
     }
 }

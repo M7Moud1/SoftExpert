@@ -56,13 +56,14 @@ class ReciepeDetails: UIViewController {
         
         
         titleNav.title = hits?.recipe.label
+        
         RecipeImg.kf.indicatorType = .activity
         let url = URL(string: hits?.recipe.image ?? "")
         RecipeImg.kf.setImage(with: url)
         
         for i in (hits?.recipe.ingredientLines)! {
             
-            str += i + "\n"
+            str += "- " + i + "\n"
         }
         
         Recipe_Ingredient.text = str
