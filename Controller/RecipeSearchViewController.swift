@@ -122,7 +122,6 @@ class RecipeSearchViewController: UIViewController,UISearchResultsUpdating,UISea
             
             self.search.isActive = false
             self.SuggestTable.isHidden = true
-            self.RecipeTable.isHidden = false
 
             UIViewHelper.shared.hideActivityIndicator(uiView: self.view)
 
@@ -130,6 +129,8 @@ class RecipeSearchViewController: UIViewController,UISearchResultsUpdating,UISea
                 
                 self.recipe = data
                 self.RecipeTable.reloadData()
+                self.RecipeTable.isHidden = false
+
                 
                 if data?.hits.count == 0 {
                     
